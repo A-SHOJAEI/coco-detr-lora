@@ -1,0 +1,145 @@
+project:
+  name: coco-detr-lora
+  seed: 1337
+  deterministic: false
+
+data:
+  kind: coco2017
+  root: data/coco
+  coco:
+    urls:
+      - http://images.cocodataset.org/zips/train2017.zip
+      - http://images.cocodataset.org/zips/val2017.zip
+      - http://images.cocodataset.org/annotations/annotations_trainval2017.zip
+    # If you have a trusted checksum source, put sha256 here. (When unknown, the downloader will still
+    # validate the unzip structure and optionally compare Content-Length if available.)
+    sha256: {}
+
+runtime:
+  device: auto
+  num_workers: 8
+  amp: true
+  ddp: true
+
+train:
+  batch_size: 2
+  max_steps: null
+  epochs: 50
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  log_every: 50
+  save_every: 1
+
+eval:
+  score_threshold: 0.05
+  max_detections_per_image: 100
+  calib_bins: 15
+  match_iou: 0.5
+
+experiments:
+  # Baseline exactly as in the plan.
+  - name: fasterrcnn_r50_fpn_baseline
+    model:
+      arch: fasterrcnn_r50_fpn
+      num_classes: 91
+      regime: full
+    out_dir: runs/coco2017/fasterrcnn_r50_fpn_baseline
+
+  # Fine-tuning regime ablation exactly as in the plan.
+  - name: detr_r50_full
+    model:
+      arch: detr_r50
+      num_classes: 91
+      regime: full
+      lora:
+        enabled: false
+    out_dir: runs/coco2017/detr_r50_full
+
+  - name: detr_r50_lora_only_r8_attn
+    model:
+      arch: detr_r50
+      num_classes: 91
+      regime: lora_only
+      lora:
+        enabled: true
+        rank: 8
+        alpha: 16
+        dropout: 0.0
+        placement: attention_only
+    out_dir: runs/coco2017/detr_r50_lora_only_r8_attn
+
+  - name: detr_r50_partial_unfreeze
+    model:
+      arch: detr_r50
+      num_classes: 91
+      regime: partial
+      lora:
+        enabled: false
+    out_dir: runs/coco2017/detr_r50_partial_unfreeze
+
+  # LoRA rank/placement ablations exactly as in the plan.
+  - name: detr_r50_lora_only_r4_attn
+    model:
+      arch: detr_r50
+      num_classes: 91
+      regime: lora_only
+      lora:
+        enabled: true
+        rank: 4
+        alpha: 8
+        dropout: 0.0
+        placement: attention_only
+    out_dir: runs/coco2017/detr_r50_lora_only_r4_attn
+
+  - name: detr_r50_lora_only_r16_attn
+    model:
+      arch: detr_r50
+      num_classes: 91
+      regime: lora_only
+      lora:
+        enabled: true
+        rank: 16
+        alpha: 32
+        dropout: 0.0
+        placement: attention_only
+    out_dir: runs/coco2017/detr_r50_lora_only_r16_attn
+
+  - name: detr_r50_lora_only_r4_attn_ffn
+    model:
+      arch: detr_r50
+      num_classes: 91
+      regime: lora_only
+      lora:
+        enabled: true
+        rank: 4
+        alpha: 8
+        dropout: 0.0
+        placement: attention_ffn
+    out_dir: runs/coco2017/detr_r50_lora_only_r4_attn_ffn
+
+  - name: detr_r50_lora_only_r8_attn_ffn
+    model:
+      arch: detr_r50
+      num_classes: 91
+      regime: lora_only
+      lora:
+        enabled: true
+        rank: 8
+        alpha: 16
+        dropout: 0.0
+        placement: attention_ffn
+    out_dir: runs/coco2017/detr_r50_lora_only_r8_attn_ffn
+
+  - name: detr_r50_lora_only_r16_attn_ffn
+    model:
+      arch: detr_r50
+      num_classes: 91
+      regime: lora_only
+      lora:
+        enabled: true
+        rank: 16
+        alpha: 32
+        dropout: 0.0
+        placement: attention_ffn
+    out_dir: runs/coco2017/detr_r50_lora_only_r16_attn_ffn
+

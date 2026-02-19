@@ -1,0 +1,62 @@
+project:
+  name: coco-detr-lora
+  seed: 42
+  deterministic: true
+
+data:
+  kind: synthetic_coco
+  root: data/synthetic_train
+  image_size: [512, 512]
+  num_classes: 10
+  train_images: 500
+  val_images: 50
+
+runtime:
+  device: auto
+  num_workers: 2
+  amp: false
+  ddp: false
+
+train:
+  batch_size: 4
+  max_steps: 500
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  log_every: 50
+  save_every: 250
+
+eval:
+  score_threshold: 0.05
+  max_detections_per_image: 100
+  calib_bins: 15
+  match_iou: 0.5
+
+experiments:
+  - name: fasterrcnn_baseline
+    model:
+      arch: fasterrcnn_r50_fpn
+      num_classes: 11
+      regime: full
+    out_dir: runs/train/fasterrcnn_baseline
+
+  - name: detr_full
+    model:
+      arch: detr_r50
+      num_classes: ${data.num_classes}
+      regime: full
+      lora:
+        enabled: false
+    out_dir: runs/train/detr_full
+
+  - name: detr_lora_r4_attn
+    model:
+      arch: detr_r50
+      num_classes: ${data.num_classes}
+      regime: lora_only
+      lora:
+        enabled: true
+        rank: 4
+        alpha: 8
+        dropout: 0.0
+        placement: attention_only
+    out_dir: runs/train/detr_lora_r4_attn

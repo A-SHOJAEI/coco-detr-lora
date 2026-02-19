@@ -1,0 +1,21 @@
+# Pinned runtime dependencies for reproducible runs.
+# Note: torch/torchvision wheels depend on platform/CUDA. These pins target CPU wheels from PyPI.
+torch==2.2.2
+torchvision==0.17.2
+
+numpy==1.26.4
+pyyaml==6.0.1
+tqdm==4.66.2
+requests==2.31.0
+pillow==10.2.0
+
+# NOTE: We intentionally avoid `pycocotools` here. It often requires system Python headers
+# (e.g. `python3.12-dev`) to compile native extensions, which breaks on minimal Ubuntu
+# hosts. This repo’s default smoke pipeline uses a pure-Python COCO JSON loader and a
+# lightweight evaluator so it runs in a repo-local venv without apt dependencies.
+
+# Install this package itself (needed for `from coco_detr_lora import ...`)
+-e .
+
+# Dev / test (lightweight)
+pytest==8.1.1

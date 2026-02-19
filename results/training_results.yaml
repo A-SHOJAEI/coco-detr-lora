@@ -1,0 +1,49 @@
+{
+  "experiments": [
+    {
+      "experiment": "fasterrcnn_baseline",
+      "meta": {
+        "steps": 500,
+        "elapsed_s": 399.3776786327362,
+        "params": {
+          "total": 41398406,
+          "trainable": 41398406
+        },
+        "peak_vram_bytes": 12197753856
+      }
+    },
+    {
+      "experiment": "detr_full",
+      "meta": {
+        "steps": 500,
+        "elapsed_s": 50.39099478721619,
+        "params": {
+          "total": 33669175,
+          "trainable": 33669175
+        },
+        "peak_vram_bytes": 2310022144
+      }
+    },
+    {
+      "experiment": "detr_lora_r4_attn",
+      "meta": {
+        "steps": 500,
+        "elapsed_s": 33.10345911979675,
+        "params": {
+          "total": 33767479,
+          "trainable": 246543
+        },
+        "peak_vram_bytes": 399579648
+      }
+    }
+  ],
+  "test_metrics": {
+    "steps": 500,
+    "elapsed_s": 33.10345911979675,
+    "params": {
+      "total": 33767479,
+      "trainable": 246543
+    },
+    "peak_vram_bytes": 399579648
+  }
+}
